@@ -3,7 +3,7 @@ var url = require('url');
 const DEFAULT_ENCODING = 'utf-8';
 const DEFAULT_JSON_FORMAT = '\t';
 const DEFAULT_GET_COUNT = 40;
-const DEFAULT_URL = ''; // = 'http://' + 'localhost:' + '1337';
+var DEFAULT_URL = '';
 const market = require('./market');
 const moment = require('moment');
 const request = require('request');
@@ -16,14 +16,8 @@ const MarketInstance = require('./models/marketinstance.model');
 module.exports = {
 
     setDefaultUrl: function (req) {
-
-        var requrl = url.format({
-            protocol: req.protocol,
-            host: req.get('host'),
-            pathname: req.originalUrl,
-        });
-
-        DEFAULT_URL = requrl;
+        DEFAULT_URL = req.protocol + '://' + req.get('host');
+        //console.log(DEFAULT_URL);
     },
 
     listEventTypes: function () {
@@ -152,7 +146,7 @@ module.exports = {
                 var marketinstance = getMarketInstance(marketObj);
 
                 var postUrl = DEFAULT_URL + "/marketinstance/create";
-                console.log(postUrl);
+                
                 var JSONformData = JSON.stringify(marketinstance);
              
                 postData(postUrl, JSONformData).then(function (res) {   // post to "/marketinstance/create"
@@ -249,7 +243,7 @@ async function GetMarketCatalogue(eventTypeId,inplayonly) {
     var inPlayString = '"inPlayOnly": ' + inplayonly;
     var requestFilters = '{"filter":{"eventTypeIds": ["' + eventTypeId + '"], ' + inPlayString + ', "marketCountries":["GB","AU","US", "IE", "NZ", "IN", "DK", "ES", "TR", "BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
     var options = updateHeaders('listMarketCatalogue');
-    console.log(requestFilters);    
+    //console.log(requestFilters);    
     return await httpRequestPromise(options, requestFilters);
 }
 

@@ -11,11 +11,11 @@ global.document = document;
 var window = document.defaultView;
 var $ = require('jquery')(window);
 
-const DEFAULT_MARKET = 2;
+const DEFAULT_MARKET = 3;
 const INPLAYONLY = true;
 
 router.get('/', function (req, res) {
-    console.log("renderMarkets() called on server side");    
+    betfair.setDefaultUrl(req);
     renderMarkets(DEFAULT_MARKET, 'index', INPLAYONLY, res);
 });
 
