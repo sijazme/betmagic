@@ -18,7 +18,7 @@ block static
                         label(for='inplayonly')  In-Play 
                             
                         
-    div(class="divblack") Tennis (#{markets.length})
+    div(class="divblack") #{markets[0].marketCatalogue.eventType.name} (#{markets.length})
 
 block content
     div#container
@@ -43,7 +43,7 @@ block content
                         div(id=market.betpriceId1 class=market.betpriceClass1)=market.betprice1                             
                     td(style="width:80px;")
                         pre(class="pre")
-                          a(class="marketId" target="_blank" href='https://www.betfair.com.au/exchange/plus/tennis/market/' + market.marketBook.marketId) #{market.marketBook.marketId}
+                          a(class="marketId" target="_blank" href='https://www.betfair.com.au/exchange/plus/' + market.eventType  + '/market/' + market.marketBook.marketId) #{market.marketBook.marketId}
                           if market.inPlay
                             if market.marketDuration > 60
                                 p(class="durationgreen") #{market.marketDuration} mins

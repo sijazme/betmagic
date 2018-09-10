@@ -39,6 +39,16 @@ a {
     height: 45px;
 }
 
+.genre-list {
+    color: black;
+    padding: 0px;
+    margin-left: 15px;
+    list-style-type: none;
+    width: 50%;
+    font-weight: 200;
+    font-family: Calibri;    
+}
+
 
 .genre-list tr {
     line-height: 25px;
@@ -63,7 +73,7 @@ a {
     color: black;
     text-align: center;
     font-size: 10px;
-    font-weight: bold;    
+    font-weight: 200;    
 }
 
 .divtitle {
@@ -192,23 +202,8 @@ a {
     cursor: pointer;
 }
 
-.genre-list {
-    color: black;
-    padding: 0px;
-    margin-left: 15px;
-    list-style-type: none;
-    width: 50%;
-    font-weight: 200;
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-}
 
 
-li {
-    width: 600px;
-    height: 100px;
-    border: solid 1px black;    
-    margin: 10px 2px 0 0;
-}
 
 button
 {

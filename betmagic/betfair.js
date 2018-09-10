@@ -179,7 +179,7 @@ function getMarketInstance(marketObj) {
     {
         marketId: marketBook.marketId,
         eventType: marketCatalogue.eventType.name,
-        competition: marketCatalogue.eventType.name,
+        competition: marketCatalogue.competition.name,
         created: moment().utc().local().format(),
         startTime: marketObj.startDateTime,
         timelapse: marketObj.marketDuration
@@ -188,18 +188,49 @@ function getMarketInstance(marketObj) {
     return marketinstance;
 }
 
+function NaNcheck(val) {
+
+    var valfloat = parseFloat(val);
+
+    if (isNaN(valfloat)) {
+        return 0;
+    }
+    else {
+        return valfloat;
+    }
+}
+
+function getLeastBetPrice(runner) {
+
+    if (runner.ex.availableToBack[0] != null && typeof runner.ex.availableToBack[0].price !== 'undefined') {
+        return NaNcheck(runner.ex.availableToBack[0].price);
+    }
+
+    if (runner.ex.availableToBack[1] != null && typeof runner.ex.availableToBack[1].price !== 'undefined') {
+        return NaNcheck(runner.ex.availableToBack[1].price);
+    }
+
+    if (runner.ex.availableToBack[2] != null && typeof runner.ex.availableToBack[2].price !== 'undefined') {
+        return NaNcheck(runner.ex.availableToBack[2].price);
+    }
+
+    return parseFloat(0);
+}
+
 function saveRunnerSnapshot(_id, runner, name)  {
 
+    console.log(JSON.stringify(runner));
     let runnersnapshot = new RunnerSnapshot(
         {
             marketInstanceId: _id,
             selectionId: runner.selectionId,
             runnerName: name,
-            lastPriceTraded: runner.lastPriceTraded,
+            lastPriceTraded: getLeastBetPrice(runner),
             totalMatched: runner.totalMatched
         }
     );
 
+    
     runnersnapshot.save(function (err, doc) {
         if (err) {
             console.log(err);

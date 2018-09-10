@@ -47,6 +47,9 @@ class Market {
         if (this.inPlay) {
 
             betprice = this.NaNcheck(this.marketBook.runners[0].lastPriceTraded);
+            if (betprice == null || betprice <= 0) {
+                betprice = this.getLeastBetPrice(this.marketBook.runners[0]);
+            }
         }
 
         else {
@@ -63,6 +66,9 @@ class Market {
         if (this.inPlay) {
 
             betprice = this.NaNcheck(this.marketBook.runners[1].lastPriceTraded);
+            if (betprice == null || betprice <= 0) {
+                betprice = this.getLeastBetPrice(this.marketBook.runners[1]);
+            }
         }
 
         else {
@@ -131,7 +137,28 @@ class Market {
         return Math.abs(minutesFloor);
     }
 
+    get eventType() {
 
+        var eventTypeId = parseInt(this.marketCatalogue.eventType.id);
+        var eventName = this.marketCatalogue.eventType.name.toLowerCase();
+        
+        switch (eventTypeId) {
+            case 1:                
+                eventName = "football";
+                break;
+            //case 2:
+            //    eventName = "tennis";
+            //    break;
+            //case 3:
+            //    eventName = "american-football";
+            //    break;
+            //case 4:
+            //    eventName = "rugby";
+            //    break;
+        }
+
+        return eventName;
+    }
 
     get fromNow() {
         return moment.utc(this.marketCatalogue.marketStartTime).local().fromNow();

@@ -11,10 +11,11 @@ global.document = document;
 var window = document.defaultView;
 var $ = require('jquery')(window);
 
-const DEFAULT_MARKET = 1;
+const DEFAULT_MARKET = 2;
 const INPLAYONLY = true;
 
 router.get('/', function (req, res) {
+    betfair.listEventTypes();
     betfair.setDefaultUrl(req);
     renderMarkets(DEFAULT_MARKET, 'index', INPLAYONLY, res);
 });

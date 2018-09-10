@@ -3,7 +3,7 @@ block scripts
    script(src='/javascripts/local.js')
 
 block content
-   table(class="genre-list")
+ table(class="genre-list")
         tbody
             each market in markets               
                  tr
@@ -13,8 +13,6 @@ block content
                         else
                             div(class="greyblock")
                                 | #{market.startTimeCustom}
-                              
-
                     td
                       | #{market.marketCatalogue.runners[0].runnerName}
                       br
@@ -22,15 +20,13 @@ block content
                     
                     td(style="width:80px")
                         div(id=market.betpriceId0 class=market.betpriceClass0)=market.betprice0
-
                     td(style="width:80px")
-                        div(id=market.betpriceId1 class=market.betpriceClass1)=market.betprice1
-
-                    td(style="width:100px;")
+                        div(id=market.betpriceId1 class=market.betpriceClass1)=market.betprice1                             
+                    td(style="width:80px;")
                         pre(class="pre")
-                          a(class="marketId" target="_blank" href='https://www.betfair.com.au/exchange/plus/tennis/market/' + market.marketBook.marketId) #{market.marketBook.marketId}
+                          a(class="marketId" target="_blank" href='https://www.betfair.com.au/exchange/plus/' + market.eventType  + '/market/' + market.marketBook.marketId) #{market.marketBook.marketId}
                           if market.inPlay
-                            if market.marketDuration > 60
+                            if market.marketDuration > 70
                                 p(class="durationgreen") #{market.marketDuration} mins
                             else
                                 p(class="durationred") #{market.marketDuration} mins
