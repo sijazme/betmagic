@@ -1,0 +1,51 @@
+﻿extends layout
+
+block scripts
+   script(src='/javascripts/local.js')
+
+block static
+    div#timer(class="divtimer")
+    div(class="divtitle")
+        h1= title
+        p Welcome to #{title}
+
+        table(class="settings")
+            tbody
+                 tr
+                    td(style="width:15px")
+                        input#inplayonly(onclick='refresh()').checkbox(type='checkbox', name="inplayonly", checked=(markets.inplayonly || undefined))
+                    td
+                        label(for='inplayonly')  In-Play 
+                            
+                        
+    div(class="divblack") Tennis (#{markets.length})
+
+block content
+    div#container
+     table(class="genre-list")
+        tbody
+            each market in markets               
+                 tr
+                    td(style="width:120px")
+                        if market.inPlay                        
+                            div(class="greenblock") In-Play
+                        else
+                            div(class="greyblock")
+                                | #{market.startTimeCustom}
+                    td
+                      | #{market.marketCatalogue.runners[0].runnerName}
+                      br
+                      | #{market.marketCatalogue.runners[1].runnerName}
+                    
+                    td(style="width:80px")
+                        div(id=market.betpriceId0 class=market.betpriceClass0)=market.betprice0
+                    td(style="width:80px")
+                        div(id=market.betpriceId1 class=market.betpriceClass1)=market.betprice1                             
+                    td(style="width:80px;")
+                        pre(class="pre")
+                          a(class="marketId" target="_blank" href='https://www.betfair.com.au/exchange/plus/tennis/market/' + market.marketBook.marketId) #{market.marketBook.marketId}
+                          if market.inPlay
+                            if market.marketDuration > 60
+                                p(class="durationgreen") #{market.marketDuration} mins
+                            else
+                                p(class="durationred") #{market.marketDuration} mins

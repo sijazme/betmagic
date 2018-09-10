@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "betmagic", "betmagic\betmagic.njsproj", "{8C215B63-53BE-4720-A090-5BD3E931FC55}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C215B63-53BE-4720-A090-5BD3E931FC55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C215B63-53BE-4720-A090-5BD3E931FC55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C215B63-53BE-4720-A090-5BD3E931FC55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C215B63-53BE-4720-A090-5BD3E931FC55}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ED4E21BF-ACEA-4F9B-B9DD-5C8F79028BA9}
+	EndGlobalSection
+EndGlobal
