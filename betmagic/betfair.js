@@ -12,7 +12,6 @@ const RunnerSnapshot = require('./models/runnersnapshot.model');
 
 const MarketInstance = require('./models/marketinstance.model');
 
-
 module.exports = {
 
     setDefaultUrl: function (req) {
@@ -61,8 +60,6 @@ module.exports = {
             GetMarketCatalogue(eventTypeId,inplayonly).then(function (marketCatalogue) {
             
                 if (marketCatalogue != null && marketCatalogue.length > 0) {
-
-                    //console.log("marketCatalogue length: " + marketCatalogue.length);
                     module.exports.resolveMarketBooks(marketCatalogue).then(function (marketList) {
 
                         //console.log("IN PLAY VALUE IN GetMarketCatalogue " + inplayonly);
@@ -87,7 +84,7 @@ module.exports = {
                     });
                 }
                 else {
-                    reject("error: marketCatalogue is empty list");
+                    reject("error: getMarketList(): marketCatalogue is empty list");
                 }
                 
             }).catch((err) => {
@@ -152,8 +149,6 @@ module.exports = {
                 postData(postUrl, JSONformData).then(function (res) {   // post to "/marketinstance/create"
 
                     var _id = JSON.parse(res);
-
-                    //console.log("marketInstance " + _id);
 
                     saveRunnerSnapshot(_id, marketBook.runners[0], marketCatalogue.runners[0].runnerName);
                     
@@ -278,9 +273,22 @@ function httpRequestPromise(params, postData) {
             });
         });
 
+        req.on('socket', function (socket) {
+            socket.setTimeout(3000);
+            socket.on('timeout', function () {
+                req.abort();
+            });
+        });
+
         req.on('error', function (err) {
+
+            if (err.code === "ECONNRESET") {
+                console.log("HTTP REQUEST TIMEOUT");             
+            }
+
             reject(err);
         });
+
         if (postData) {
             //console.log(postData);
             req.write(postData, DEFAULT_ENCODING);

@@ -11,7 +11,7 @@ global.document = document;
 var window = document.defaultView;
 var $ = require('jquery')(window);
 
-const DEFAULT_MARKET = 3;
+const DEFAULT_MARKET = 1;
 const INPLAYONLY = true;
 
 router.get('/', function (req, res) {
@@ -42,13 +42,17 @@ function renderMarkets(eventTypeId, page, inplayonly, res) {
                 
             }).
             catch((error) => {
-                console.log(error, 'Promise error' + error.status);
+                console.log(error, 'renderMarkets unable to save market data ' + error.status);
             });
         }
 
     }).
     catch((error) => {
-        console.log(error, 'Promise error' + error.status);
+        console.log(error);
+        res.render("error", {
+            message: 'not market data was returned by betfair api call to getMarketList()',
+            error: error
+        });
     });
 }
 
