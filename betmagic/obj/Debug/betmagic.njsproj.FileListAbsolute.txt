@@ -3,3 +3,6 @@ C:\Users\ijaz\source\repos\betmagic\betmagic\obj\Debug\betmagic.njsproj.CoreComp
 C:\Users\ijaz\source\repos\betmagic\betmagic\bin\Microsoft.NodejsTools.WebRole.dll
 D:\MEGA\src\betmagic\betmagic\obj\Debug\betmagic.njsproj.CoreCompileInputs.cache
 D:\MEGA\src\betmagic\betmagic\bin\Microsoft.NodejsTools.WebRole.dll
+C:\Users\ehsan.ijaz\source\repos\betmagic\betmagic\obj\Debug\betmagic.njsprojAssemblyReference.cache
+C:\Users\ehsan.ijaz\source\repos\betmagic\betmagic\obj\Debug\betmagic.njsproj.CoreCompileInputs.cache
+C:\Users\ehsan.ijaz\source\repos\betmagic\betmagic\bin\Microsoft.NodejsTools.WebRole.dll

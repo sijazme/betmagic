@@ -45,8 +45,6 @@ mongoose.Promise = global.Promise;
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// end database mlab
-
 // error handlers
 
 // development error handler

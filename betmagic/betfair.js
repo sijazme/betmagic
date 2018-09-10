@@ -1,8 +1,9 @@
 ﻿var https = require("https");
+var url = require('url');
 const DEFAULT_ENCODING = 'utf-8';
 const DEFAULT_JSON_FORMAT = '\t';
 const DEFAULT_GET_COUNT = 40;
-const DEFAULT_URL = 'http://' + 'localhost:' + '1337';
+const DEFAULT_URL = ''; // = 'http://' + 'localhost:' + '1337';
 const market = require('./market');
 const moment = require('moment');
 const request = require('request');
@@ -13,6 +14,17 @@ const MarketInstance = require('./models/marketinstance.model');
 
 
 module.exports = {
+
+    setDefaultUrl: function (req) {
+
+        var requrl = url.format({
+            protocol: req.protocol,
+            host: req.get('host'),
+            pathname: req.originalUrl,
+        });
+
+        DEFAULT_URL = requrl;
+    },
 
     listEventTypes: function () {
 
@@ -46,8 +58,6 @@ module.exports = {
         req.on('error', function (e) {
             console.log('Problem with request: ' + e.message);
         });
-      
-      
     },
 
     getMarketList: function (eventTypeId, inplayonly) {
@@ -55,32 +65,40 @@ module.exports = {
         return new Promise(function (resolve, reject) {
 
             GetMarketCatalogue(eventTypeId,inplayonly).then(function (marketCatalogue) {
+            
+                if (marketCatalogue != null && marketCatalogue.length > 0) {
 
-                module.exports.resolveMarketBooks(marketCatalogue).then(function (marketList) {
-                   
-                    //console.log("IN PLAY VALUE IN GetMarketCatalogue " + inplayonly);
+                    //console.log("marketCatalogue length: " + marketCatalogue.length);
+                    module.exports.resolveMarketBooks(marketCatalogue).then(function (marketList) {
 
-                    if (inplayonly) {
-                        //console.log("SORT MARKET ON PRICE ########################")
-                        marketList = marketList.sort(comparePrice).reverse();
-                    }
-                    else {
-                        //console.log("INPLAYVALUE **************************** " + inplayonly);
-                        //console.log("SORT MARKET ON START TIME ########################")
-                        marketList = marketList.sort(compareTime);
+                        //console.log("IN PLAY VALUE IN GetMarketCatalogue " + inplayonly);
 
-                    }
+                        if (inplayonly) {
+                            //console.log("SORT MARKET ON PRICE ########################")
+                            marketList = marketList.sort(comparePrice).reverse();
+                        }
+                        else {
+                            //console.log("INPLAYVALUE **************************** " + inplayonly);
+                            //console.log("SORT MARKET ON START TIME ########################")
+                            marketList = marketList.sort(compareTime);
 
-                    //marketList.forEach(function (item) {
-                    //    console.log(item.betpricedelta);
-                    //});
+                        }
+
+                        //marketList.forEach(function (item) {
+                        //    console.log(item.betpricedelta);
+                        //});
 
 
-                    resolve(marketList);
-                });
+                        resolve(marketList);
+                    });
+                }
+                else {
+                    reject("error: marketCatalogue is empty list");
+                }
                 
             }).catch((err) => {
-                        console.log("connection error: betfair server is unreachable" + err.status);
+                console.log("connection error: betfair server is unreachable: " + err);
+                reject("getMarketList failed");
                     //console.log("getMarketList() crashed at GetMarketCatalogue(): " + err.status);
                 });
         });
@@ -89,15 +107,15 @@ module.exports = {
     resolveMarketBooks: async function (marketCatalogue) {
 
         return new Promise(function (resolve, reject) {
-
+            
             const marketList = [];
             var marketIds = new Array();
             var marketCount = marketCatalogue.length; // marketcatalogue gives us total market count
-
+         
             marketCatalogue.forEach(function (item) {
                 marketIds.push(item.marketId);
             });
-        
+            
             for (var i = 0; i < marketIds.length; i += DEFAULT_GET_COUNT)
             {
                 var marketids_sliced = marketIds.slice(i, i + DEFAULT_GET_COUNT); // get 40 marketids every time
@@ -114,55 +132,17 @@ module.exports = {
                     });                    
 
                 }).catch((err) => {
-                    console.log("GetMarketBooks: " + err);
+                    console.log("resolveMarketBooks: " + err);
                 });
             }            
         });        
-    },
-
-    listEventTypesRpc: function () {
-
-        var str = "";
-        var requestFilters = '{"filter":{}}';
-        var jsonRequest = constructJsonRpcRequest('listEventTypes', requestFilters);
-        
-
-        var options = GetOptionsRpc();
- 
-        var req = https.request(options, function (res) {
-            res.setEncoding(DEFAULT_ENCODING);
-            res.on('data', function (chunk) {
-                str += chunk;
-            });
-
-            res.on('end', function (chunk) {
-               
-                var response = JSON.parse(str);
-                handleError(res.statusCode, response);               
-                var jsonPretty = JSON.stringify(JSON.parse(str), null, 2);
-                console.log(jsonPretty);
-               
-            });
-
-        });
-        
-        req.write(jsonRequest, DEFAULT_ENCODING);
-        req.end();
-
-        req.on('error', function (e) {
-            console.log('Problem with request: ' + e.message);
-        }); 
-       
-        
     },
 
     saveMarketData: async function (marketlist) {
 
         return new Promise(function (resolve, reject) {
 
-           
-            var count = marketlist.length;
-            var marketInstanceId = '';
+            var count = marketlist.length;            
 
             marketlist.forEach(function (marketObj) {
 
@@ -172,65 +152,28 @@ module.exports = {
                 var marketinstance = getMarketInstance(marketObj);
 
                 var postUrl = DEFAULT_URL + "/marketinstance/create";
+                console.log(postUrl);
                 var JSONformData = JSON.stringify(marketinstance);
              
                 postData(postUrl, JSONformData).then(function (res) {   // post to "/marketinstance/create"
 
                     var _id = JSON.parse(res);
-                    console.log(_id);
 
-                    let runnersnapshot0 = getRunnerSnapshot(_id, marketBook.runners[0], marketCatalogue.runners[0].runnerName);
+                    //console.log("marketInstance " + _id);
 
-                    runnersnapshot0.save(function (err, doc) {
-                        if (err) {
-                            console.log(err);
-                            //return reject(err);
-                        }
-
-                        console.log('runndersnapshop0 added ' + doc._id);
-                    });
-
-                    let runnersnapshot1 = getRunnerSnapshot(_id, marketBook.runners[1], marketCatalogue.runners[1].runnerName);
-
-                    runnersnapshot1.save(function (err, doc) {
-                        if (err) {
-                            console.log(err);
-                        }
-
-                        console.log('runndersnapshop1 added ' + doc._id);
-                    });
+                    saveRunnerSnapshot(_id, marketBook.runners[0], marketCatalogue.runners[0].runnerName);
+                    
+                    saveRunnerSnapshot(_id, marketBook.runners[1], marketCatalogue.runners[1].runnerName);
 
                     if (--count == 0)
-                        resolve();                  
-
-                    //postUrl = DEFAULT_URL + "/runnersnapshot/create";
-                   
-                    //JSONformData = getRunnerData(marketInstanceId, marketBook.runners[0]);
-
-                    //postData(postUrl, JSONformData).then(function (_id) {
-
-                    //    JSONformData = getRunnerData(marketInstanceId, marketBook.runners[1]);
-
-                    //    postData(postUrl, JSONformData).then(function (_id) {
-
-                    //        //if (--count == 0)
-                    //        //    resolve();
-
-
-                    //    }).
-                    //    catch((error) => {
-                    //        console.log(error, 'postData(runnersnapshot1) error' + error.status);
-                    //    });
-
-                    //}).
-                    //catch((error) => {
-                    //    console.log(error, 'postData(runnersnapshot0) error' + error.status);
-                    //});
-
+                    {                       
+                        resolve();
+                    }
 
                 }).
                 catch((error) => {
                     console.log(error, 'postData() error' + error.status);
+                    reject('postData() error' + error);
                 });
             });
         });
@@ -256,7 +199,7 @@ function getMarketInstance(marketObj) {
     return marketinstance;
 }
 
-function getRunnerSnapshot(_id, runner, name)  {
+function saveRunnerSnapshot(_id, runner, name)  {
 
     let runnersnapshot = new RunnerSnapshot(
         {
@@ -268,21 +211,12 @@ function getRunnerSnapshot(_id, runner, name)  {
         }
     );
 
-    return runnersnapshot;
-}
-
-function getRunnerData(marketInstanceId, runner) {
-
-    var runnersnapshot =
-    {
-        marketInstanceId: marketInstanceId,
-        selectionId: runner.selectionId,
-        runnerName: runner.name,
-        lastPriceTraded: runner.lastPriceTraded,
-        totalMatched: runner.totalMatched
-    };
-
-    return JSON.stringify(runnersnapshot);
+    runnersnapshot.save(function (err, doc) {
+        if (err) {
+            console.log(err);
+        }
+        //console.log('runndersnapshot added ' + doc._id);
+    });
 }
 
 async function postData(postUrl, JSONformData) {
@@ -300,7 +234,7 @@ async function postData(postUrl, JSONformData) {
                 return resolve(body);
             }
             else {
-                console.log('--------------------------> error: statuscode:  ', response && response.statusCode);
+                console.log('error: statuscode:  ', response && response.statusCode);
                 return reject(new Error(response.statusCode));
             }
         });
@@ -312,20 +246,15 @@ async function GetMarketCatalogue(eventTypeId,inplayonly) {
     var d = new Date();
     d.setHours(d.getHours() - 5);
     var jsonDate = d.toJSON();
-
     var inPlayString = '"inPlayOnly": ' + inplayonly;
-
-    //console.log("GetMarketCatalogue  (param inplayonly) : " + inplayonly);
-    //console.log("GetMarketCatalogue  (inPlayString) : " + inPlayString);    
-
-    var requestFilters = '{"filter":{"eventTypeIds": ["' + eventTypeId + '"], '  +  inPlayString + ', "marketCountries":["GB","AU","US", "IE", "NZ", "IN", "DK", "ES"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
+    var requestFilters = '{"filter":{"eventTypeIds": ["' + eventTypeId + '"], ' + inPlayString + ', "marketCountries":["GB","AU","US", "IE", "NZ", "IN", "DK", "ES", "TR", "BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
     var options = updateHeaders('listMarketCatalogue');
+    console.log(requestFilters);    
     return await httpRequestPromise(options, requestFilters);
 }
 
 async function GetMarketBooks(marketIds) {
 
-    //console.log(marketIds);    
     var requestFilters = '{"marketIds":' + marketIds + ',"priceProjection":{"priceData":["EX_BEST_OFFERS"],"exBestOfferOverRides":{"bestPricesDepth":2,"rollupModel":"STAKE","rollupLimit":20},"virtualise":false,"rolloverStakes":false},"orderProjection":"ALL","matchProjection":"ROLLED_UP_BY_PRICE"}}';
     var options = updateHeaders('listMarketBook');
     return await httpRequestPromise(options, requestFilters);
@@ -369,7 +298,7 @@ function httpRequestPromise(params, postData) {
 
 
 const appkey = 'Hb5saWp13phw2thS';
-const ssid = 'o6MT756w54HIdNSGovLmiBv8Uwc3u4LUuVf3sT+/fcI=';
+const ssid = '3R7eLXaEMMycp/WUQovV9qHk6hR8Qfz9zRCJx8hMcv4=';
 
 function constructJsonRpcRequest(operation, params) {
     return '{"jsonrpc":"2.0","method":"SportsAPING/v1.0/' + operation + '", "params": ' + params + ', "id": 1}';
