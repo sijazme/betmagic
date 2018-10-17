@@ -9,8 +9,11 @@ const moment = require('moment');
 const request = require('request');
 
 const RunnerSnapshot = require('./models/runnersnapshot.model');
+// const MarketInstance = require('./models/marketinstance.model');
 
-const MarketInstance = require('./models/marketinstance.model');
+const appkey = 'Hb5saWp13phw2thS';
+const ssid = 'zhdoWPSVfmIXIVOn+uJ/RnkUwTVFzShlzRKwJzeAoYA=';
+
 
 module.exports = {
 
@@ -38,7 +41,7 @@ module.exports = {
                 var response = JSON.parse(str);
                 handleError(res.statusCode, response);
                 var jsonPretty = JSON.stringify(JSON.parse(str), null, 2);
-                console.log(jsonPretty);
+                //console.log(jsonPretty);
                 //module.exports.listMarketCatalogue(updateHeaders('listMarketCatalogue'), response);                
                 
             });
@@ -53,13 +56,65 @@ module.exports = {
         });
     },
 
-    getMarketList: function (eventTypeId, inplayonly) {
+    getMultiMarketArray: function (mlist) {
+
+            var multi_array = [];
+            var tennis_list = [];
+            var soccer_list = [];
+            var cricket_list = [];
+
+            for (var i = 0; i < mlist.length; i++) {
+
+                marketObj = mlist[i];
+
+                if (marketObj.eventTypeId == 2) {
+                    tennis_list.push(marketObj);
+                    //console.log("adding tennis");
+                }
+
+                if (marketObj.eventTypeId == 4) {
+                    soccer_list.push(marketObj);
+                   // console.log("adding cricket");
+                }
+
+                if (marketObj.eventTypeId == 1) {
+                    cricket_list.push(marketObj);
+                   // console.log("adding soccer");
+                }
+            }
+
+        if (tennis_list.length > 0)
+            multi_array.push(tennis_list);
+        //if (soccer_list.length > 0)
+          //  multi_array.push(soccer_list);
+        //if (cricket_list.length > 0)
+          //  multi_array.push(cricket_list);
+        
+            return multi_array;
+    },
+
+    getMultiMarkets: function (eventTypeIds, inplayonly) {
+
+        return new Promise(function (resolve, reject) {
+
+        module.exports.getMarketList(eventTypeIds, inplayonly).then(function (mlist) {
+
+                var multi = module.exports.getMultiMarketArray(mlist);
+                resolve(multi);
+
+            });
+        });
+
+    },
+
+    getMarketList: function (eventTypeIds, inplayonly) {
         
         return new Promise(function (resolve, reject) {
 
-            GetMarketCatalogue(eventTypeId,inplayonly).then(function (marketCatalogue) {
+            GetMarketCatalogue(eventTypeIds,inplayonly).then(function (marketCatalogue) {
             
                 if (marketCatalogue != null && marketCatalogue.length > 0) {
+
                     module.exports.resolveMarketBooks(marketCatalogue).then(function (marketList) {
 
                         //console.log("IN PLAY VALUE IN GetMarketCatalogue " + inplayonly);
@@ -88,9 +143,7 @@ module.exports = {
                 }
                 
             }).catch((err) => {
-                console.log("connection error: betfair server is unreachable: " + err);
-                reject("getMarketList failed");
-                    //console.log("getMarketList() crashed at GetMarketCatalogue(): " + err.status);
+                        console.log("connection error: betfair server is unreachable: " + err);                        
                 });
         });
     },
@@ -200,6 +253,8 @@ function NaNcheck(val) {
     }
 }
 
+
+
 function getLeastBetPrice(runner) {
 
     if (runner.ex.availableToBack[0] != null && typeof runner.ex.availableToBack[0].price !== 'undefined') {
@@ -219,7 +274,7 @@ function getLeastBetPrice(runner) {
 
 function saveRunnerSnapshot(_id, runner, name)  {
 
-    console.log(JSON.stringify(runner));
+    //console.log(JSON.stringify(runner));
     let runnersnapshot = new RunnerSnapshot(
         {
             marketInstanceId: _id,
@@ -233,7 +288,7 @@ function saveRunnerSnapshot(_id, runner, name)  {
     
     runnersnapshot.save(function (err, doc) {
         if (err) {
-            console.log(err);
+            console.log("err:" + err);
         }
         //console.log('runndersnapshot added ' + doc._id);
     });
@@ -261,13 +316,18 @@ async function postData(postUrl, JSONformData) {
     });
 }
 
-async function GetMarketCatalogue(eventTypeId,inplayonly) {
+async function GetMarketCatalogue(eventTypeIds,inplayonly) {
 
     var d = new Date();
     d.setHours(d.getHours() - 5);
     var jsonDate = d.toJSON();
     var inPlayString = '"inPlayOnly": ' + inplayonly;
-    var requestFilters = '{"filter":{"eventTypeIds": ["' + eventTypeId + '"], ' + inPlayString + ', "marketCountries":["GB","AU","US", "IE", "NZ", "IN", "DK", "ES", "TR", "BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
+
+    var requestFilters = '{"filter":{"eventTypeIds":' + JSON.stringify(eventTypeIds) + ', ' + inPlayString + ', "marketCountries":["GB","AU","US","FR","IE", "RU", "LU", "NZ", "IN", "DK", "ES", "TR", "BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
+    // "' + JSON.stringify(eventTypeIds) + '"
+    //console.log(JSON.stringify(eventTypeIds));
+    //var requestFilters = '{"filter":{"eventTypeIds":["2"], ' + inPlayString + ', "marketCountries":["GB","AU","US", "IE", "NZ", "IN", "DK", "ES", "TR", "BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
+    console.log(requestFilters);
     var options = updateHeaders('listMarketCatalogue');
     //console.log(requestFilters);    
     return await httpRequestPromise(options, requestFilters);
@@ -330,8 +390,6 @@ function httpRequestPromise(params, postData) {
 }
 
 
-const appkey = 'Hb5saWp13phw2thS';
-const ssid = '3R7eLXaEMMycp/WUQovV9qHk6hR8Qfz9zRCJx8hMcv4=';
 
 function constructJsonRpcRequest(operation, params) {
     return '{"jsonrpc":"2.0","method":"SportsAPING/v1.0/' + operation + '", "params": ' + params + ', "id": 1}';

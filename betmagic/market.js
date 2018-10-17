@@ -35,6 +35,10 @@ class Market {
 
         return parseFloat(0);
     }
+
+    get eventTypeId() {
+        return this.marketCatalogue.eventType.id;
+    }
     
     get inPlay() {
         return this.marketBook.inplay;

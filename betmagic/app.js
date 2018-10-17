@@ -79,7 +79,7 @@ var server = app.listen(app.get('port'), function () {
     debug('Express server listening on port ' + server.address().port);
 
     var betfair = require('./betfair');
-    //betfair.listEventTypes();
+    betfair.listEventTypes();
     //betfair.listMarkets(2).then(function (marketList) {        
     //    console.log(marketList.length);
     //});

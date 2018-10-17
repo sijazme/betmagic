@@ -13,30 +13,72 @@ var $ = require('jquery')(window);
 
 const DEFAULT_MARKET = 2;
 const INPLAYONLY = true;
+const EVENTTYPEIDS = [2,4,5];
 
 router.get('/', function (req, res) {
-    betfair.listEventTypes();
+    //betfair.listEventTypes();
     betfair.setDefaultUrl(req);
-    renderMarkets(DEFAULT_MARKET, 'index', INPLAYONLY, res);
+    renderMultiMarkets(EVENTTYPEIDS, 'index', INPLAYONLY, res);
 });
 
 router.get('/markets', function (req, res) {
 
     betfair.setDefaultUrl(req);
     var inplayonly = (req.query.inplayonly != null && JSON.parse(req.query.inplayonly.toLowerCase()) == true);
-    renderMarkets(DEFAULT_MARKET, 'markets', inplayonly, res);
+    renderMarkets(EVENTTYPEIDS, 'markets', inplayonly, res);
 });
 
-function renderMarkets(eventTypeId, page, inplayonly, res) {
 
-    betfair.getMarketList(eventTypeId, inplayonly).then(function (marketList)
-    {
+function renderMultiMarkets(eventTypeIds, page, inplayonly, res) {
+
+    betfair.getMultiMarkets(eventTypeIds, inplayonly).then(function (multimarkets) {
+
+        console.log(multimarkets);
+        res.render(page, {
+            title: 'Betfair Markets',
+            markets: multimarkets,
+            inplayonly: inplayonly
+        });
+
+
+        if (multimarkets && inplayonly) {
+            //betfair.saveMarketData(multimarkets).then(function (obj) {
+
+            //}).
+            //catch((error) => {
+            //    console.log(error, 'renderMultiMarkets unable to save market data ' + error.status);
+            //});
+        }
+
+    }).
+        catch((error) => {
+            console.log(error);
+            res.render("error", {
+                message: 'not market data was returned by betfair api call to getMarketList()',
+                error: error
+            });
+        });
+}
+
+function renderMarkets(eventTypeIds, page, inplayonly, res) {
+
+    betfair.getMarketList(eventTypeIds, inplayonly).then(function (marketList)
+    {        
+        //marketList.map(function (market) {
+        //    console.log("market event id --> " + market.eventTypeId);
+        //});
+
+        //for (var i = 0; i < marketList.length; i++) {
+        //    console.log(marketList[i].eventTypeId);
+        //}
+
         res.render(page, {
             title: 'Betfair Markets',
             markets: marketList,
             inplayonly: inplayonly
         });
 
+     
         if (marketList && inplayonly)
         {
             betfair.saveMarketData(marketList).then(function (obj) {
