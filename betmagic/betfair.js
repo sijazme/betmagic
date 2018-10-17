@@ -72,12 +72,12 @@ module.exports = {
                     //console.log("adding tennis");
                 }
 
-                if (marketObj.eventTypeId == 4) {
+                if (marketObj.eventTypeId == 1) {
                     soccer_list.push(marketObj);
                    // console.log("adding cricket");
                 }
 
-                if (marketObj.eventTypeId == 1) {
+                if (marketObj.eventTypeId == 4) {
                     cricket_list.push(marketObj);
                    // console.log("adding soccer");
                 }
@@ -85,10 +85,10 @@ module.exports = {
 
         if (tennis_list.length > 0)
             multi_array.push(tennis_list);
-        //if (soccer_list.length > 0)
-          //  multi_array.push(soccer_list);
-        //if (cricket_list.length > 0)
-          //  multi_array.push(cricket_list);
+        if (soccer_list.length > 0)
+            multi_array.push(soccer_list);
+        if (cricket_list.length > 0)
+            multi_array.push(cricket_list);
         
             return multi_array;
     },

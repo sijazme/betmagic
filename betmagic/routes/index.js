@@ -33,7 +33,7 @@ function renderMultiMarkets(eventTypeIds, page, inplayonly, res) {
 
     betfair.getMultiMarkets(eventTypeIds, inplayonly).then(function (multimarkets) {
 
-        console.log(multimarkets);
+        //console.log(multimarkets);
         res.render(page, {
             title: 'Betfair Markets',
             markets: multimarkets,
