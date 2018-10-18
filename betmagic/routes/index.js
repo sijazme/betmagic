@@ -21,8 +21,7 @@ router.get('/', function (req, res) {
     renderMultiMarkets(EVENTTYPEIDS, 'index', INPLAYONLY, res);
 });
 
-router.get('/runners', function (req, res) {
-    console.log("runners GET URL .............................................");
+router.get('/runners', function (req, res) {    
     betfair.setDefaultUrl(req);
     var inplayonly = (req.query.inplayonly != null && JSON.parse(req.query.inplayonly.toLowerCase()) == true);
     renderMultiMarkets(EVENTTYPEIDS, 'runners', inplayonly, res);
@@ -39,7 +38,7 @@ function renderMultiMarkets(eventTypeIds, page, inplayonly, res) {
             inplayonly: inplayonly
         });
 
-        console.log(multimarkets);
+        //console.log(multimarkets);
 
         if (multimarkets && inplayonly) {
             //betfair.saveMarketData(multimarkets).then(function (obj) {

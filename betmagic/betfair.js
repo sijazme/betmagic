@@ -12,7 +12,7 @@ const RunnerSnapshot = require('./models/runnersnapshot.model');
 // const MarketInstance = require('./models/marketinstance.model');
 
 const appkey = 'Hb5saWp13phw2thS';
-const ssid = 'zhdoWPSVfmIXIVOn+uJ/RnkUwTVFzShlzRKwJzeAoYA=';
+const ssid = 'JuQluTVcFG/YN9aaJTshW4Qm04FKVWa01vmOYw6+xGo=';
 
 
 module.exports = {
@@ -41,7 +41,7 @@ module.exports = {
                 var response = JSON.parse(str);
                 handleError(res.statusCode, response);
                 var jsonPretty = JSON.stringify(JSON.parse(str), null, 2);
-                //console.log(jsonPretty);
+                console.log(jsonPretty);
                 //module.exports.listMarketCatalogue(updateHeaders('listMarketCatalogue'), response);                
                 
             });
@@ -56,42 +56,83 @@ module.exports = {
         });
     },
 
-    getMultiMarketArray: function (mlist) {
+    getMultiMarketArray2: function (mlist) {
 
-            var multi_array = [];
-            var tennis_list = [];
-            var soccer_list = [];
-            var cricket_list = [];
+        var multi_array = [];
+        var eventIds = [1, 2, 4, 5, 1477, 1420];
 
-            for (var i = 0; i < mlist.length; i++) {
+        eventIds.forEach(function (eventId) {
 
-                marketObj = mlist[i];
+            var temp_list = [];
 
-                if (marketObj.eventTypeId == 2) {
-                    tennis_list.push(marketObj);
-                    //console.log("adding tennis");
+            mlist.forEach(function (marketObj) {
+                if (marketObj.eventTypeId == eventId) {
+                    temp_list.push(marketObj);
                 }
+            });
 
-                if (marketObj.eventTypeId == 1) {
-                    soccer_list.push(marketObj);
-                   // console.log("adding cricket");
-                }
+            if (temp_list.length > 0)
+                multi_array.push(temp_list);
+        });
 
-                if (marketObj.eventTypeId == 4) {
-                    cricket_list.push(marketObj);
-                   // console.log("adding soccer");
-                }
-            }
-
-        if (tennis_list.length > 0)
-            multi_array.push(tennis_list);
-        if (soccer_list.length > 0)
-            multi_array.push(soccer_list);
-        if (cricket_list.length > 0)
-            multi_array.push(cricket_list);
-        
-            return multi_array;
+        return multi_array;
     },
+
+    //getMultiMarketArray: function (mlist) {
+
+    //    var multi_array = [];
+    //    var tennis_list = [];
+    //    var soccer_list = [];
+    //    var cricket_list = [];
+    //    var rugby_union_list = [];
+    //    var australian_rules_list = [];
+    //    var rugby_league_list = [];
+        
+
+    //    for (var i = 0; i < mlist.length; i++) {
+
+    //        marketObj = mlist[i];
+
+    //        if (marketObj.eventTypeId == 2) {
+    //            tennis_list.push(marketObj);                
+    //        }
+
+    //        if (marketObj.eventTypeId == 1) {
+    //            soccer_list.push(marketObj);                
+    //        }
+
+    //        if (marketObj.eventTypeId == 4) {
+    //            cricket_list.push(marketObj);                
+    //        }
+
+    //        if (marketObj.eventTypeId == 5) {
+    //            rugby_union_list.push(marketObj);                
+    //        }
+
+    //        if (marketObj.eventTypeId == 1477) {
+    //            rugby_league_list.push(marketObj);                
+    //        }
+
+    //        if (marketObj.eventTypeId == 1420) {
+    //            australian_rules_list.push(marketObj);                
+    //        }
+            
+    //    }
+
+    //    if (tennis_list.length > 0)
+    //        multi_array.push(tennis_list);
+
+    //    if (soccer_list.length > 0)
+    //        multi_array.push(soccer_list);
+
+    //    if (cricket_list.length > 0)
+    //        multi_array.push(cricket_list);
+
+    //    if (australian_rules_list.length > 0)
+    //        multi_array.push(australian_rules_list);
+        
+    //        return multi_array;
+    //},
 
     getMultiMarkets: function (eventTypeIds, inplayonly) {
 
@@ -99,7 +140,7 @@ module.exports = {
 
         module.exports.getMarketList(eventTypeIds, inplayonly).then(function (mlist) {
 
-                var multi = module.exports.getMultiMarketArray(mlist);
+                var multi = module.exports.getMultiMarketArray2(mlist);
                 resolve(multi);
 
             });
@@ -323,11 +364,11 @@ async function GetMarketCatalogue(eventTypeIds,inplayonly) {
     var jsonDate = d.toJSON();
     var inPlayString = '"inPlayOnly": ' + inplayonly;
 
-    var requestFilters = '{"filter":{"eventTypeIds":' + JSON.stringify(eventTypeIds) + ', ' + inPlayString + ', "marketCountries":["GB","AU","US","FR","IE", "RU", "LU", "CN", "NZ", "IN", "DK", "ES", "TR", "BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
+    var requestFilters = '{"filter":{"eventTypeIds":' + JSON.stringify(eventTypeIds) + ', ' + inPlayString + ', "marketCountries":["GB","AU","US","FR","DE","IE", "RU","LU","CN","NZ","IN","DK","ES","TR","BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
     // "' + JSON.stringify(eventTypeIds) + '"
     //console.log(JSON.stringify(eventTypeIds));
     //var requestFilters = '{"filter":{"eventTypeIds":["2"], ' + inPlayString + ', "marketCountries":["GB","AU","US", "IE", "NZ", "IN", "DK", "ES", "TR", "BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
-    console.log(requestFilters);
+    //console.log(requestFilters);
     var options = updateHeaders('listMarketCatalogue');
     //console.log(requestFilters);    
     return await httpRequestPromise(options, requestFilters);
