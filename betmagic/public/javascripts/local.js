@@ -1,8 +1,6 @@
 ﻿$(document).ready(function () {
-        
     ready();    
     settimeout();
-    alert('ready');
 });
 
 function ready() {
@@ -19,6 +17,7 @@ function settimeout() {
     setTimeout(refresh, timeout * 1000);
 }
 
+// repeat page load runner data
 function refresh() {
 
     clearIntervals();
@@ -40,27 +39,7 @@ function refresh() {
         });
 }
 
-//function refresh2(inplayvalue) {
-
-//    clearIntervals();
-    
-//    $.ajax({
-//        url: '/runners',
-//        type: 'GET',
-//        data: { inplayonly: inplayvalue },
-//        dataType: 'html'
-//    })
-//        .done(function (data) {
-//            $('#container').hide();
-//            $('#container').empty();
-//            $('#container').html(data);
-//            $('#container').show();
-//        })
-//        .fail(function () {
-//            console.log("refresh() failed in local.js");
-//        });
-//}
-
+// first time page load runner data
 function init() {
 
     clearIntervals();
