@@ -1,7 +1,8 @@
 ﻿$(document).ready(function () {
-    
-    ready();
+        
+    ready();    
     settimeout();
+    alert('ready');
 });
 
 function ready() {
@@ -21,20 +22,63 @@ function settimeout() {
 function refresh() {
 
     clearIntervals();
-
+    
     $.ajax({
-        url: '/markets',
+        url: '/runners',
         type: 'GET',
         data: { inplayonly: $('#inplayonly').is(":checked") },
         dataType: 'html'
     })
         .done(function (data) {
             $('#container').hide();
+            $('#container').empty();
             $('#container').html(data);
             $('#container').show();
         })
         .fail(function () {
-            console.log("Something went wrong!");
+            console.log("refresh() failed in local.js");
+        });
+}
+
+//function refresh2(inplayvalue) {
+
+//    clearIntervals();
+    
+//    $.ajax({
+//        url: '/runners',
+//        type: 'GET',
+//        data: { inplayonly: inplayvalue },
+//        dataType: 'html'
+//    })
+//        .done(function (data) {
+//            $('#container').hide();
+//            $('#container').empty();
+//            $('#container').html(data);
+//            $('#container').show();
+//        })
+//        .fail(function () {
+//            console.log("refresh() failed in local.js");
+//        });
+//}
+
+function init() {
+
+    clearIntervals();
+
+    $.ajax({
+        url: '/runners',
+        type: 'GET',
+        data: { inplayonly: true },
+        dataType: 'html'
+    })
+        .done(function (data) {
+            $('#container').hide();
+            $('#container').empty();
+            $('#container').html(data);
+            $('#container').show();
+        })
+        .fail(function () {
+            console.log("init() failed in local.js");
         });
 }
 
@@ -58,7 +102,7 @@ function startTimer(seconds) {
 function clearIntervals() {
     for (var i = setInterval(function () { }, 0); i > 0; i--) {
         window.clearInterval(i);
-        //window.clearTimeout(i);        
+        //window.clearTimeout(i);
     }
 }
 

@@ -2,7 +2,8 @@
 
 block scripts
    script(src='/javascripts/local.js')
-
+   script.
+    init();
 block static
     div#timer(class="divtimer")
     div(class="divtitle")
@@ -16,8 +17,6 @@ block static
                         input#inplayonly(onclick='refresh()').checkbox(type='checkbox', name="inplayonly", checked=(inplayonly || undefined))
                     td
                         label(for='inplayonly')  In-Play
-
-
-include ./runners.pug
-
-
+    
+block content    
+    div#container

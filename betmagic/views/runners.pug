@@ -1,5 +1,7 @@
-﻿block content
-    div#container   
+﻿block scripts
+   script(src='/javascripts/local.js')
+
+div
     each mlist in markets
         div(class="divblack") #{mlist[0].marketCatalogue.eventType.name} (#{mlist.length})
         table(class="genre-list")                

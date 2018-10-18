@@ -62,9 +62,6 @@
     <Content Include="views\index.pug" />
     <Content Include="views\layout.pug" />
     <Content Include="views\error.pug" />
-    <Content Include="views\markets.pug">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="views\runners.pug">
       <SubType>Code</SubType>
     </Content>

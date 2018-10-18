@@ -323,7 +323,7 @@ async function GetMarketCatalogue(eventTypeIds,inplayonly) {
     var jsonDate = d.toJSON();
     var inPlayString = '"inPlayOnly": ' + inplayonly;
 
-    var requestFilters = '{"filter":{"eventTypeIds":' + JSON.stringify(eventTypeIds) + ', ' + inPlayString + ', "marketCountries":["GB","AU","US","FR","IE", "RU", "LU", "NZ", "IN", "DK", "ES", "TR", "BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
+    var requestFilters = '{"filter":{"eventTypeIds":' + JSON.stringify(eventTypeIds) + ', ' + inPlayString + ', "marketCountries":["GB","AU","US","FR","IE", "RU", "LU", "CN", "NZ", "IN", "DK", "ES", "TR", "BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
     // "' + JSON.stringify(eventTypeIds) + '"
     //console.log(JSON.stringify(eventTypeIds));
     //var requestFilters = '{"filter":{"eventTypeIds":["2"], ' + inPlayString + ', "marketCountries":["GB","AU","US", "IE", "NZ", "IN", "DK", "ES", "TR", "BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
