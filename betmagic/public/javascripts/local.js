@@ -1,7 +1,19 @@
-﻿$(document).ready(function () {
-    ready();    
-    settimeout();
-});
+﻿
+
+$(document).ready(function () {
+    ready();
+})
+
+var interval_ids = [];
+var interval = null;
+
+(function () {
+    var timeout = 15;
+    startTimer(timeout);
+    setTimeout(reload, timeout * 1000);
+  
+})();
+
 
 function ready() {
     $('div[id^="betprice"]').each(function () {
@@ -10,39 +22,31 @@ function ready() {
     });
 }
 
-function settimeout() {
+function reload() {
 
-    var timeout = 15;   
-    startTimer(timeout);
-    setTimeout(refresh, timeout * 1000);
-}
-
-// repeat page load runner data
-function refresh() {
-
-    clearIntervals();
+   
     
     $.ajax({
         url: '/runners',
         type: 'GET',
         data: { inplayonly: $('#inplayonly').is(":checked") },
         dataType: 'html'
-    })
-        .done(function (data) {
+    }).done(function (data) {
+        
             $('#container').hide();
             $('#container').empty();
-            $('#container').html(data);
+           $('#container').html(data);
             $('#container').show();
+
         })
         .fail(function () {
             console.log("refresh() failed in local.js");
         });
 }
 
-// first time page load runner data
+ 
 function init() {
-
-    clearIntervals();
+    
 
     $.ajax({
         url: '/runners',
@@ -51,10 +55,8 @@ function init() {
         dataType: 'html'
     })
         .done(function (data) {
-            $('#container').hide();
-            $('#container').empty();
             $('#container').html(data);
-            $('#container').show();
+            
         })
         .fail(function () {
             console.log("init() failed in local.js");
@@ -62,27 +64,39 @@ function init() {
 }
 
 function startTimer(seconds) {
+    timer(seconds, callback);    
+}
 
-    var interval = setInterval(function () {
-        --seconds;
-        if (seconds.toString().length == 1) {
-            seconds = "0" + seconds;
-        }
+function timer(seconds, cb) {
+    var remaningTime = seconds;
+    window.setTimeout(function () {
+        cb();
+        console.log(remaningTime);
+        if (remaningTime > 0) {
 
-        $('#timer').html('00:' + '00:' + seconds);
 
-        if (seconds <= 1) {            
-            $('#timer').effect("pulsate", { times: 2 }, 2000);
-            //clearInterval(interval);
+            var seconds = remaningTime;
+
+            if (seconds.toString().length == 1) {
+                seconds = "0" + seconds;
+            }
+
+            $('#timer').html('00:' + '00:' + seconds);
+
+            if (seconds <= 2) {
+                $('#timer').effect("pulsate", { times: 4 }, 2000);                
+            }
+
+            timer(remaningTime - 1, cb);
         }
     }, 1000);
 }
 
-function clearIntervals() {
-    for (var i = setInterval(function () { }, 0); i > 0; i--) {
-        window.clearInterval(i);
-        //window.clearTimeout(i);
-    }
-}
+var callback = function () {
+    console.log('callback');
+};
+
+
+
 
 

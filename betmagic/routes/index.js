@@ -13,7 +13,8 @@ var $ = require('jquery')(window);
 
 const DEFAULT_MARKET = 2;
 const INPLAYONLY = true;
-const EVENTTYPEIDS = [2,4,5];
+//const EVENTTYPEIDS = [2,4,5];
+const EVENTTYPEIDS = [2];  // ONLY TENNIS
 
 router.get('/', function (req, res) {
     //betfair.listEventTypes();

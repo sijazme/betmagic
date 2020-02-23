@@ -12,7 +12,7 @@ const RunnerSnapshot = require('./models/runnersnapshot.model');
 // const MarketInstance = require('./models/marketinstance.model');
 
 const appkey = 'Hb5saWp13phw2thS';
-const ssid = 'JuQluTVcFG/YN9aaJTshW4Qm04FKVWa01vmOYw6+xGo=';
+const ssid = '1TytTvJFdrYBnB6qaxaQzaU5a+qgfwvlBAJp4nMbz7k=';
 
 
 module.exports = {
@@ -78,62 +78,7 @@ module.exports = {
         return multi_array;
     },
 
-    //getMultiMarketArray: function (mlist) {
-
-    //    var multi_array = [];
-    //    var tennis_list = [];
-    //    var soccer_list = [];
-    //    var cricket_list = [];
-    //    var rugby_union_list = [];
-    //    var australian_rules_list = [];
-    //    var rugby_league_list = [];
-        
-
-    //    for (var i = 0; i < mlist.length; i++) {
-
-    //        marketObj = mlist[i];
-
-    //        if (marketObj.eventTypeId == 2) {
-    //            tennis_list.push(marketObj);                
-    //        }
-
-    //        if (marketObj.eventTypeId == 1) {
-    //            soccer_list.push(marketObj);                
-    //        }
-
-    //        if (marketObj.eventTypeId == 4) {
-    //            cricket_list.push(marketObj);                
-    //        }
-
-    //        if (marketObj.eventTypeId == 5) {
-    //            rugby_union_list.push(marketObj);                
-    //        }
-
-    //        if (marketObj.eventTypeId == 1477) {
-    //            rugby_league_list.push(marketObj);                
-    //        }
-
-    //        if (marketObj.eventTypeId == 1420) {
-    //            australian_rules_list.push(marketObj);                
-    //        }
-            
-    //    }
-
-    //    if (tennis_list.length > 0)
-    //        multi_array.push(tennis_list);
-
-    //    if (soccer_list.length > 0)
-    //        multi_array.push(soccer_list);
-
-    //    if (cricket_list.length > 0)
-    //        multi_array.push(cricket_list);
-
-    //    if (australian_rules_list.length > 0)
-    //        multi_array.push(australian_rules_list);
-        
-    //        return multi_array;
-    //},
-
+    
     getMultiMarkets: function (eventTypeIds, inplayonly) {
 
         return new Promise(function (resolve, reject) {
@@ -364,7 +309,7 @@ async function GetMarketCatalogue(eventTypeIds,inplayonly) {
     var jsonDate = d.toJSON();
     var inPlayString = '"inPlayOnly": ' + inplayonly;
 
-    var requestFilters = '{"filter":{"eventTypeIds":' + JSON.stringify(eventTypeIds) + ', ' + inPlayString + ', "marketCountries":["GB","AU","US","FR","DE","IE", "RU","LU","CN","NZ","IN","DK","ES","TR","BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
+    var requestFilters = '{"filter":{"eventTypeIds":' + JSON.stringify(eventTypeIds) + ', ' + inPlayString + ', "marketCountries":["GB","AU","US","FR","DE","IE", "RU","LU","CN","NZ","ND","IN","DK","ES","TR","BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';
     // "' + JSON.stringify(eventTypeIds) + '"
     //console.log(JSON.stringify(eventTypeIds));
     //var requestFilters = '{"filter":{"eventTypeIds":["2"], ' + inPlayString + ', "marketCountries":["GB","AU","US", "IE", "NZ", "IN", "DK", "ES", "TR", "BA"], "marketTypeCodes":["WIN", "MATCH_ODDS"],"marketStartTime":{"from":"' + jsonDate + '"}}, "sort":"FIRST_TO_START", "maxResults":"50", "marketProjection":["MARKET_START_TIME","RUNNER_METADATA","COMPETITION", "EVENT", "EVENT_TYPE"]}}';

@@ -7,15 +7,17 @@ div
         table(class="genre-list")                
             each market in mlist
                     tr
-                    td(style="width:120px")
+                    td(style="width:80px")
                         if market.inPlay
                             div(class="greenblock") In-Play
                         else
                             div(class="greyblock")
                                 | #{market.startTimeCustom}
-                    td
-                        | #{market.marketCatalogue.runners[0].runnerName}
-                        br
+                    td 
+                     p(class="runnername")
+                        |  #{market.marketCatalogue.runners[0].runnerName}
+                        
+                     p(class="runnername")
                         | #{market.marketCatalogue.runners[1].runnerName}
                     
                     td(style="width:80px")
@@ -26,7 +28,7 @@ div
                         pre(class="pre")
                             a(class="marketId" target="_blank" href='https://www.betfair.com.au/exchange/plus/' + market.eventType  + '/market/' + market.marketBook.marketId) #{market.marketBook.marketId}
                             if market.inPlay
-                            if market.marketDuration > 60
+                            if market.marketDuration > 70
                                 p(class="durationgreen") #{market.marketDuration} mins
                             else
                                 p(class="durationred") #{market.marketDuration} mins
